@@ -19,10 +19,32 @@ attributes_index = {
   "pdays": 13,
   "previous": 14,
   "poutcome": 15,
-  "y": 16
+  "Class": 16
 }
 
+catToNumDict = {
+   "no": 0,
+  "yes": 1,
+  
+  "telephone": 0,
+  "cellular": 1,
+  
+  "primary": 0,
+  "secondary": 1,
+  "tertiary": 3,
+  
+}
 
+def categoricalToNumeric(ds):
+    dataset=ds
+    for i in range(0,len(dataset)):
+        for j in range(0,len(dataset[0])):
+            if(str(dataset[i][j]) in catToNumDict.keys()):
+                dataset[i][j]=catToNumDict[str(dataset[i][j])]
+    return dataset
+    
+def getAttributes():
+    return list(attributes_index.keys())
 def formatDataset(csv,test,l,r):
     ds=[]
     lenght=len(csv)
@@ -75,16 +97,17 @@ def getColumn(ds,attribute):
 
 def getColumnClass(ds,attribute,y):
     index=attributes_index[attribute]
-    class_index=attributes_index["y"]
+    class_index=attributes_index["Class"]
     column=[]
     for instance in ds:
         if(instance[class_index]==y):
             column.append(instance[index])
     return column
 
-def getOccurrences(ds,attribute):
-    class_index=attributes_index["y"]
+def getOccurrences(ds,attribute,normalize=0,order=0):
+    class_index=attributes_index["Class"]
     column=getColumn(ds,attribute)
+    total_sum=len(column)
     values={}
     for v in column:
         if(v not in values):
@@ -92,21 +115,29 @@ def getOccurrences(ds,attribute):
             
     for instance in ds:
         value=instance[attributes_index[attribute]]
-        if(instance[class_index]=="no"):
+        if(instance[class_index]=="no" or instance[class_index]==0):
             values[value]=[values[value][0]+1,values[value][1]]
         else:
             values[value]=[values[value][0],values[value][1]+1]
-    keys=values.keys()
+    keys=list(values.keys())
     no_list=[]
     yes_list=[]
-    keys=sorted(keys)
-    print(values)
-    for k in keys:
+    for k in values.keys():
         sum=values[k][0]+values[k][1]
-        sum=1
+        if(normalize==0):
+            sum=1
         no_list.append(values[k][0]/sum)
         yes_list.append(values[k][1]/sum)
+    
+    if(order==1):
+        for i in range(0,len(yes_list)-1):
+            for j in range(0,len(yes_list)-1):
+                if(yes_list[j]>yes_list[j+1]):
+                    yes_list[j], yes_list[j+1] = yes_list[j+1], yes_list[j]
+                    no_list[j], no_list[j+1] = no_list[j+1], no_list[j]
+                    keys[j], keys[j+1] = keys[j+1], keys[j]
     return keys,no_list,yes_list
+
     
 def getStatistic(ds,attribute):
     column=getColumn(ds,attribute)
