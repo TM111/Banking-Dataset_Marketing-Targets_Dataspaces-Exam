@@ -10,9 +10,8 @@ random=0
 #PREPARAZIONE DATASET
 train_path = "D:/Desktop/dataspaces/train.csv"
 train=F.formatDataset(pd.read_csv(train_path, delimiter=","),small,lenght,random)
-for i in range(0,15):
+for i in range(0,16):
     F.removeAttributeValue(train,i, "unknown",small)
-
 #MATRICE DI CORRELAZIONE
 train_df = pd.DataFrame({
     'age':F.getColumn(train, "age"),
@@ -21,7 +20,7 @@ train_df = pd.DataFrame({
     'campaign': F.getColumn(train, "campaign"),
     'pdays': F.getColumn(train, "pdays"),
     'previous': F.getColumn(train, "previous"),
-    'class': F.getColumn(train, "y")
+    'class': F.getColumn(train, "Class")
 })
 
 corr_df = train_df.corr(method='pearson')
@@ -40,7 +39,7 @@ columns=list(train_df.columns)[:-1]
 plt.figure(figsize=(35, 20))
 for att in columns:
     data.append(list(F.getStatistic(train,att).values()))
-F.drawTable(data, columns, list(F.getStatistic(train,"age").keys()))
+#F.drawTable(data, columns, list(F.getStatistic(train,"age").keys()))
 
 
 
@@ -55,12 +54,12 @@ attributes=["job","marital","education","default","housing","loan","contact","mo
 att=attributes[0]
 wid=0.5
 plt.figure(figsize=(60, 24))
-'''
-keys,no_list,yes_list=F.getOccurrences(train,att)
+
+keys,no_list,yes_list=F.getOccurrences(train,att,1,1)
 plt.bar(keys, no_list,width=wid)
 plt.bar(keys, yes_list, bottom = no_list,width=wid)
 plt.show()
-'''
+
 
 
 
