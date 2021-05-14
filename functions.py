@@ -19,7 +19,12 @@ attributes_index = {
   "pdays": 13,
   "previous": 14,
   "poutcome": 15,
-  "Class": 16
+  "emp.var.rate": 16,
+  "cons.price.idx": 17,
+  "cons.conf.idx": 18,
+  "euribor3m": 19,
+  "nr.employed": 20,
+  "Class": 21
 }
 
 catToNumDict = {
@@ -45,6 +50,7 @@ def categoricalToNumeric(ds):
     
 def getAttributes():
     return list(attributes_index.keys())
+
 def formatDataset(csv,test,l,r):
     ds=[]
     lenght=len(csv)
@@ -83,7 +89,7 @@ def removeAttributeValue(ds,attribute,value,test):
     for i in range(0,len(ds)):
         if(str(ds[i][index])!=str(value)):
             tmp_ds.append(ds[i])
-    ds[:]=tmp_ds
+    return tmp_ds
         
 def getElement(ds, index,attribute):
     return ds[index][attributes_index[attribute]]
@@ -120,6 +126,9 @@ def getOccurrences(ds,attribute,normalize=0,order=0):
         else:
             values[value]=[values[value][0],values[value][1]+1]
     keys=list(values.keys())
+    for i in range(0,len(keys)):
+        tmp=keys[i]+"\n"+str(round((values[keys[i]][0]+values[keys[i]][1])*100/total_sum,1))+"%"
+        keys[i]=tmp+"\n"+str(values[keys[i]][0]+values[keys[i]][1])
     no_list=[]
     yes_list=[]
     for k in values.keys():
@@ -136,8 +145,8 @@ def getOccurrences(ds,attribute,normalize=0,order=0):
                     yes_list[j], yes_list[j+1] = yes_list[j+1], yes_list[j]
                     no_list[j], no_list[j+1] = no_list[j+1], no_list[j]
                     keys[j], keys[j+1] = keys[j+1], keys[j]
+    
     return keys,no_list,yes_list
-
     
 def getStatistic(ds,attribute):
     column=getColumn(ds,attribute)
