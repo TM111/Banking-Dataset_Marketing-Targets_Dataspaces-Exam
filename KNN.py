@@ -3,8 +3,8 @@ import pandas as pd
 import random as rnd
 from sklearn.model_selection import train_test_split
 
-small=0
-lenght=500
+small=1
+lenght=10
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
@@ -18,7 +18,7 @@ if(small==1):
 else:
     dataset=pd.read_csv(dataset_path,delimiter=";")
 
-dataset.drop(["duration","month","day_of_week",
+dataset.drop(["job","marital","education","poutcome","duration","month","day_of_week",
               "default","pdays"], axis=1, inplace=True) # elimino attributi
 indexRows=[]
 index=-1
@@ -28,8 +28,12 @@ for row in dataset.iloc:
         indexRows.append(index)
 dataset.drop(indexRows , inplace=True) #elimino missing values
 
+
 for i in range(2,rnd.randint(3,6)):#mescolo il dataset
     for j in range(2,rnd.randint(3,6)):
-                   dataset = dataset.sample(frac=1).reset_index(drop=True) 
+        if(random==1):
+            dataset = dataset.sample(frac=1).reset_index(drop=True) 
+
+dataset=F.categoricalToNumeric(dataset) # no/yes -> 0/2
 
 train, test = train_test_split(dataset, test_size=0.1)

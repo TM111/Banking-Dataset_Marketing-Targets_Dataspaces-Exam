@@ -1,29 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 catToNumDict = {
    "no": 0,
-  "yes": 1,
-  
+  "yes": 2,
   "telephone": 0,
-  "cellular": 1,
-  
-  "primary": 0,
-  "secondary": 1,
-  "tertiary": 3,
-  
+  "cellular": 2,
 }
 
 def categoricalToNumeric(ds):
     dataset=ds
-    for i in range(0,len(dataset)):
-        for j in range(0,len(dataset[0])):
-            if(str(dataset[i][j]) in catToNumDict.keys()):
-                dataset[i][j]=catToNumDict[str(dataset[i][j])]
+    for index, row in dataset.iterrows():
+        for att in dataset.columns:
+            value=str(dataset.iloc[index][att])
+            if(value in catToNumDict.keys()):
+                dataset.loc[index, att]=catToNumDict[value]
     return dataset
-    
+
 def getOccurrences(ds,attribute,normalize=0,order=0):
     column=ds[attribute]
     total_sum=len(column)
