@@ -2,9 +2,12 @@ import functions as F
 import pandas as pd
 import random as rnd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
 
-small=1
-lenght=10
+small=0
+lenght=300
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
@@ -36,4 +39,23 @@ for i in range(2,rnd.randint(3,6)):#mescolo il dataset
 
 dataset=F.categoricalToNumeric(dataset) # no/yes -> 0/2
 
-train, test = train_test_split(dataset, test_size=0.1)
+#TRAIN e TEST
+X = dataset.iloc[:, :-1].values
+y = dataset.iloc[:, len(dataset.columns)-1].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+
+#FEATURES SCALING
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
+
+#TRAINING and PREDICTIONS
+classifier = KNeighborsClassifier(n_neighbors=5)
+classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test)
+
+#EVALUATING
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))

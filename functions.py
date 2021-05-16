@@ -12,6 +12,8 @@ def categoricalToNumeric(ds):
     dataset=ds
     for index, row in dataset.iterrows():
         for att in dataset.columns:
+            if(att=="y"):
+                continue
             value=str(dataset.iloc[index][att])
             if(value in catToNumDict.keys()):
                 dataset.loc[index, att]=catToNumDict[value]
