@@ -1,31 +1,7 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-attributes_index = {
-  "age": 0,
-  "job": 1,
-  "marital": 2,
-  "education": 3,
-  "default": 4,
-  "balance": 5,
-  "housing": 6,
-  "loan": 7,
-  "contact": 8,
-  "day": 9,
-  "month": 10,
-  "duration": 11,
-  "campaign": 12,
-  "pdays": 13,
-  "previous": 14,
-  "poutcome": 15,
-  "emp.var.rate": 16,
-  "cons.price.idx": 17,
-  "cons.conf.idx": 18,
-  "euribor3m": 19,
-  "nr.employed": 20,
-  "Class": 21
-}
+
 
 catToNumDict = {
    "no": 0,
@@ -48,83 +24,24 @@ def categoricalToNumeric(ds):
                 dataset[i][j]=catToNumDict[str(dataset[i][j])]
     return dataset
     
-def getAttributes():
-    return list(attributes_index.keys())
 
-def formatDataset(csv,test,l,r):
-    ds=[]
-    lenght=len(csv)
-    if(test==1):
-        if(r==1):
-            csv=csv.sample(frac=1, axis=1).sample(frac=1).reset_index(drop=True)
-        lenght=l
-    for i in range(0,lenght):
-        tmp_list=[]
-        string=""
-        for c in csv.iloc[i][0]:
-            if(c!='"'):
-                string=string+c
-        for e in string.split(";"):
-            try:
-                tmp_list.append(int(e))
-            except:
-                tmp_list.append(e)
-        ds.append(tmp_list)
-    return ds
-
-def removeAttribute(ds,attribute):
-    index=attributes_index[attribute]
-    for instance in ds:
-        instance.pop(index)
-
-
-def removeAttributeValue(ds,attribute,value,test):
-    if(test==1):
-        return
-    if(type(attribute)==type(2)):
-        index=attribute
-    else:
-        index=attributes_index[attribute]
-    tmp_ds=[]
-    for i in range(0,len(ds)):
-        if(str(ds[i][index])!=str(value)):
-            tmp_ds.append(ds[i])
-    return tmp_ds
-        
-def getElement(ds, index,attribute):
-    return ds[index][attributes_index[attribute]]
-
-def getColumn(ds,attribute):
-    index=attributes_index[attribute]
-    column=[]
-    for instance in ds:
-        column.append(instance[index])
-    return column
-
-def getColumnClass(ds,attribute,y):
-    index=attributes_index[attribute]
-    class_index=attributes_index["Class"]
-    column=[]
-    for instance in ds:
-        if(instance[class_index]==y):
-            column.append(instance[index])
-    return column
 
 def getOccurrences(ds,attribute,normalize=0,order=0):
-    class_index=attributes_index["Class"]
-    column=getColumn(ds,attribute)
+    column=ds[attribute]
     total_sum=len(column)
     values={}
     for v in column:
         if(v not in values):
             values[v]=[0,0]
-            
-    for instance in ds:
-        value=instance[attributes_index[attribute]]
-        if(instance[class_index]=="no" or instance[class_index]==0):
+    
+    for i in range(0,len(ds)):
+        value=ds.iloc[i][attribute]
+        c=ds.iloc[i]["y"]
+        if(c=="no" or c==0):
             values[value]=[values[value][0]+1,values[value][1]]
         else:
             values[value]=[values[value][0],values[value][1]+1]
+
     keys=list(values.keys())
     for i in range(0,len(keys)):
         tmp=keys[i]+"\n"+str(round((values[keys[i]][0]+values[keys[i]][1])*100/total_sum,1))+"%"
@@ -139,17 +56,25 @@ def getOccurrences(ds,attribute,normalize=0,order=0):
         yes_list.append(values[k][1]/sum)
     
     if(order==1):
-        for i in range(0,len(yes_list)-1):
-            for j in range(0,len(yes_list)-1):
-                if(yes_list[j]>yes_list[j+1]):
-                    yes_list[j], yes_list[j+1] = yes_list[j+1], yes_list[j]
-                    no_list[j], no_list[j+1] = no_list[j+1], no_list[j]
-                    keys[j], keys[j+1] = keys[j+1], keys[j]
+        if(normalize==1):
+            for i in range(0,len(yes_list)-1):
+                for j in range(0,len(yes_list)-1):
+                    if(yes_list[j]>yes_list[j+1]):
+                        yes_list[j], yes_list[j+1] = yes_list[j+1], yes_list[j]
+                        no_list[j], no_list[j+1] = no_list[j+1], no_list[j]
+                        keys[j], keys[j+1] = keys[j+1], keys[j]
+        else:
+            for i in range(0,len(yes_list)-1):
+                for j in range(0,len(yes_list)-1):
+                    if(yes_list[j]+no_list[j]<yes_list[j+1]+no_list[j+1]):
+                        yes_list[j], yes_list[j+1] = yes_list[j+1], yes_list[j]
+                        no_list[j], no_list[j+1] = no_list[j+1], no_list[j]
+                        keys[j], keys[j+1] = keys[j+1], keys[j]
     
     return keys,no_list,yes_list
     
 def getStatistic(ds,attribute):
-    column=getColumn(ds,attribute)
+    column=ds[attribute]
     statistics={}
     statistics["Min"]=min(column)
     statistics["1st Q."]=np.quantile(column, 0.25)
@@ -160,18 +85,18 @@ def getStatistic(ds,attribute):
     statistics["Max"]=max(column)
     return statistics  
     
-def drawTable(data,columns,rows):
-    data=np.array(data).T.tolist()
+def drawStatisticsTable(data,columns,rows):
+    data_tmp=np.array(data).T.tolist()
     for i in range(0,len(rows)):
         for j in range(0,len(columns)):
-            if(int(data[i][j])==data[i][j]):
-                data[i][j]=int(data[i][j])
+            if(int(data_tmp[i][j])==data_tmp[i][j]):
+                data_tmp[i][j]=int(data_tmp[i][j])
             else:
-                data[i][j]=round(data[i][j],3)
+                data_tmp[i][j]=round(data_tmp[i][j],3)
     Rcolors = plt.cm.BuPu(np.linspace(0.3, 0.3, len(rows)))
-    Ccolors = plt.cm.BuPu(np.linspace(0.3, 0.3, len(rows)))
+    Ccolors = plt.cm.BuPu(np.linspace(0.3, 0.3, len(columns)))
     cell_text = []
-    for row in data:
+    for row in data_tmp:
         cell_text.append(row)
     the_table = plt.table(cellText=cell_text,
                       rowLabels=rows,
