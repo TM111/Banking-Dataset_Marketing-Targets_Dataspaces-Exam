@@ -29,8 +29,9 @@ for row in dataset.iloc:
     if("unknown" in row.values):
         indexRows.append(index)
 dataset.drop(indexRows , inplace=True) #elimino missing values
-
-dataset = dataset.sample(frac=1).reset_index(drop=True) #mescolo il dataset
+for i in range(2,rnd.randint(3,6)):#mescolo il dataset
+    for j in range(2,rnd.randint(3,6)):
+                   dataset = dataset.sample(frac=1).reset_index(drop=True) 
 
 
 

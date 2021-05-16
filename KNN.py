@@ -1,59 +1,38 @@
 import functions as F
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-from pandas import DataFrame
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
+import random as rnd
+from sklearn.model_selection import train_test_split
 
 small=0
-lenght=20
+lenght=500
 random=1
-#PREPARAZIONE TRAIN
-train_path = "D:/Desktop/dataspaces/train.csv"
-train=F.formatDataset(pd.read_csv(train_path, delimiter=","),small,lenght,random)
-for i in range(0,15):
-    train=F.removeAttributeValue(train,i, "unknown",0)
-train=F.categoricalToNumeric(train)
-
-train = DataFrame(train,columns=F.getAttributes())
-del train["job"]
-del train["marital"]
-del train["day"]
-del train["month"]
-del train["poutcome"]
-X_train = train.iloc[:, :-1].values
-y_train = train.iloc[:, 11].values
-
 #PREPARAZIONE DATASET
-test_path = "D:/Desktop/dataspaces/test.csv"
-test=F.formatDataset(pd.read_csv(test_path, delimiter=","),small,lenght,random)
-for i in range(0,15):
-    test=F.removeAttributeValue(test,i, "unknown",0)
-test=F.categoricalToNumeric(test)
-test = DataFrame(test,columns=F.getAttributes())
+dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
+if(small==1):
+    if(random==1):
+        n = sum(1 for line in open(dataset_path)) - 1
+        skip = sorted(rnd.sample(range(1,n+1),n-lenght)) 
+        dataset = pd.read_csv(dataset_path,delimiter=";", skiprows=skip)
+    else:
+        dataset=pd.read_csv(dataset_path,delimiter=";", nrows=lenght)
+else:
+    dataset=pd.read_csv(dataset_path,delimiter=";")
 
-del test["job"]
-del test["marital"]
-del test["day"]
-del test["month"]
-del test["poutcome"]
-X_test = test.iloc[:, :-1].values
-y_test = test.iloc[:, 11].values
+dataset.drop(["duration","month","day_of_week",
+              "default","pdays"], axis=1, inplace=True) # elimino attributi
+indexRows=[]
+index=-1
+for row in dataset.iloc:
+    index=index+1
+    if("unknown" in row.values):
+        indexRows.append(index)
+dataset.drop(indexRows , inplace=True) #elimino missing values
 
-#FEATURE SCALING
-scaler = StandardScaler()
-scaler.fit(X_train)
-X_train = scaler.transform(X_train)
-X_test = scaler.transform(X_test)
+for i in range(2,rnd.randint(3,6)):#mescolo il dataset
+    for j in range(2,rnd.randint(3,6)):
+                   dataset = dataset.sample(frac=1).reset_index(drop=True) 
 
-#CLASSIFIER FIT
-classifier = KNeighborsClassifier(n_neighbors=5)
-classifier.fit(X_train, y_train)
-
-y_pred = classifier.predict(X_test)
-count=0
-for i in y_pred:
-    if(i==1):
-        count=count+1
-print(count)
+train, test = train_test_split(dataset, test_size=0.1)
+print("tot: ",len(dataset))
+print("train: ",len(train))
+print("test: ",len(test))

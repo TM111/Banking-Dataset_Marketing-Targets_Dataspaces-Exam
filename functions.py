@@ -54,7 +54,6 @@ def getOccurrences(ds,attribute,normalize=0,order=0):
             sum=1
         no_list.append(values[k][0]/sum)
         yes_list.append(values[k][1]/sum)
-    
     if(order==1):
         if(normalize==1):
             for i in range(0,len(yes_list)-1):
