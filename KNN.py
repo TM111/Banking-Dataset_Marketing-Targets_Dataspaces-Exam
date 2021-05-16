@@ -33,6 +33,3 @@ for i in range(2,rnd.randint(3,6)):#mescolo il dataset
                    dataset = dataset.sample(frac=1).reset_index(drop=True) 
 
 train, test = train_test_split(dataset, test_size=0.1)
-print("tot: ",len(dataset))
-print("train: ",len(train))
-print("test: ",len(test))

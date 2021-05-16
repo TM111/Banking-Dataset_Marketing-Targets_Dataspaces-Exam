@@ -24,8 +24,6 @@ def categoricalToNumeric(ds):
                 dataset[i][j]=catToNumDict[str(dataset[i][j])]
     return dataset
     
-
-
 def getOccurrences(ds,attribute,normalize=0,order=0):
     column=ds[attribute]
     total_sum=len(column)
