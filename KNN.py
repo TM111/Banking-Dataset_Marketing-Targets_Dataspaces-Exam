@@ -7,6 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
 
+
 small=0
 lenght=10000
 random=1
