@@ -10,13 +10,11 @@ catToNumDict = {
 
 def categoricalToNumeric(ds):
     dataset=ds
+    attributes=["housing","loan","contact"]
     for index, row in dataset.iterrows():
-        for att in dataset.columns:
-            if(att=="y"):
-                continue
+        for att in attributes:
             value=str(dataset.iloc[index][att])
-            if(value in catToNumDict.keys()):
-                dataset.loc[index, att]=catToNumDict[value]
+            dataset.loc[index, att]=catToNumDict[value]
     return dataset
 
 def getOccurrences(ds,attribute,normalize=0,order=0):
