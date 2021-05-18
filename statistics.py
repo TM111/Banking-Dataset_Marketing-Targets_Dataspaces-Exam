@@ -4,7 +4,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import random as rnd
 
-
 small=1
 lenght=500
 random=1
