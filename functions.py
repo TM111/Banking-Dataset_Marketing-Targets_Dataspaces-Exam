@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import sys
 catToNumDict = {
    "no": 0,
   "yes": 2,
@@ -12,9 +12,12 @@ def categoricalToNumeric(ds):
     dataset=ds
     attributes=["housing","loan","contact"]
     for index, row in dataset.iterrows():
+        percentage="encoding: "+str(int(100*index/len(ds)))+"%"
+        sys.stdout.write('\r'+percentage)
         for att in attributes:
             value=str(dataset.iloc[index][att])
             dataset.loc[index, att]=catToNumDict[value]
+    sys.stdout.write('\r'+"                                             "+'\r')
     return dataset
 
 def getOccurrences(ds,attribute,normalize=0,order=0):

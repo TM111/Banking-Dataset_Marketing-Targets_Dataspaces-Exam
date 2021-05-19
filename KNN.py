@@ -6,10 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+import sys
 
-
-small=0
-lenght=10000
+small=1
+lenght=1000
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
@@ -31,14 +34,14 @@ for row in dataset.iloc:
     index=index+1
     if("unknown" in row.values):
         indexRows.append(index)
-dataset.drop(indexRows , inplace=True) #elimino missing values
-
+dataset.drop(indexRows , inplace=True)  #elimino missing values
+dataset.reset_index(drop=True, inplace=True) 
 
 for i in range(2,rnd.randint(3,6)):#mescolo il dataset
     for j in range(2,rnd.randint(3,6)):
         if(random==1):
             dataset = dataset.sample(frac=1).reset_index(drop=True) 
-print("encoding...")
+
 dataset=F.categoricalToNumeric(dataset) # no/yes -> 0/2
 
 #TRAIN, VAL e TEST
@@ -47,12 +50,13 @@ y = dataset.iloc[:, len(dataset.columns)-1].values
 
 test_ratio = 0.10
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, shuffle=False)
-'''
+
 scaler = StandardScaler() #scaling
 scaler.fit(X_train)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
- '''
+
+
 #TUNING
 val_ratio = 0.15
 kf = KFold(n_splits=int((1-test_ratio)/val_ratio))
@@ -66,6 +70,8 @@ min_K=3
 for i in range(min_K, max_K):
     knn = KNeighborsClassifier(n_neighbors=i)
     mean_accuracies=[]
+    percentage="tuning: "+str(int(100*i/(max_K-min_K)))+"%"
+    sys.stdout.write('\r'+percentage)
     for train_index, test_index in kf.split(X_train):# KFold Cross Val
         X_train_tmp, X_val = X_train[train_index], X_train[test_index]
         y_train_tmp, y_val = y_train[train_index], y_train[test_index]
@@ -77,9 +83,46 @@ for i in range(min_K, max_K):
     if(best_accuracy<acc):
         best_accuracy=acc
         best_k=i
-        
+sys.stdout.write('\r'+"                                             "+'\r')
 plt.figure(figsize=(12, 6))
 plt.plot(range(min_K, max_K), accuracies, color='blue')
 plt.title('Accuracy K Value')
 plt.xlabel('K Value')
 plt.ylabel('Accuracy')
+
+#TEST
+knn = KNeighborsClassifier(n_neighbors=best_k)
+knn.fit(X_train, y_train)
+pred_i = knn.predict(X_test)
+acc=1-np.mean(pred_i != y_test)
+print("K: ",best_k)
+print("Accuracy: ",acc)
+
+
+#ROC CURVE
+catToNumDict = {
+   "no": 0,
+  "yes": 1,
+}
+for i in range(0,len(y_train)):
+    y_train[i]=catToNumDict[y_train[i]]
+
+for i in range(0,len(y_test)):
+    y_test[i]=catToNumDict[y_test[i]]
+y_train=y_train.astype('int')
+y_test=y_test.astype('int')
+
+y_scores = knn.predict_proba(X_test)
+fpr, tpr, threshold = roc_curve(y_test, y_scores[:, 1])
+roc_auc = auc(fpr, tpr)
+
+plt.title('Receiver Operating Characteristic')
+plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+plt.legend(loc = 'lower right')
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0, 1])
+plt.ylim([0, 1])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.title('ROC Curve of kNN')
+plt.show()
