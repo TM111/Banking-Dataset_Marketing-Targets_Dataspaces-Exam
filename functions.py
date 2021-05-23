@@ -1,8 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import sys
 import pandas as pd
 
+def deleteMissingValues(ds,att):
+    dataset=ds
+    indexRows=[]
+    index=-1
+    for row in dataset.iloc:
+        index=index+1
+        percentage="Delete missing values: "+str(int(100*index/len(dataset)))+"%"
+        sys.stdout.write('\r'+percentage)
+        if("unknown" in row.values):
+            indexRows.append(index)
+    sys.stdout.write('\r'+"                                             "+'\r')
+    dataset.drop(indexRows , inplace=True)  #elimino missing values
+    dataset.reset_index(drop=True, inplace=True) 
+    return dataset
 
 def OneHotEncoder(ds,attributes):
     dataset=ds
@@ -12,6 +26,12 @@ def OneHotEncoder(ds,attributes):
         dataset = dataset.join(one_hot)
         for i in range(0,len(one_hot.columns)):
             dataset = dataset.rename(columns={one_hot.columns[i]: att+"_"+one_hot.columns[i]})
+    attributes=[]
+    for att in dataset.columns:
+        if(att!="y"):
+            attributes.append(att)
+    attributes.append("y")
+    dataset= dataset[attributes]
     return dataset
 
 def getOccurrences(ds,attribute,normalize=0,order=0):

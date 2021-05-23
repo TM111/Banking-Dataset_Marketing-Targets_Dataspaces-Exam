@@ -12,8 +12,8 @@ from sklearn.metrics import auc
 import sys
 from mlxtend.plotting import plot_learning_curves
 
-small=1
-lenght=40
+small=0
+lenght=400
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
@@ -29,18 +29,8 @@ else:
 
 dataset.drop(["job","marital","education","poutcome","duration","month","day_of_week",
               "default","pdays"], axis=1, inplace=True) # elimino attributi
-indexRows=[]
-index=-1
 
-for row in dataset.iloc:
-    index=index+1
-    percentage="Delete missing values: "+str(int(100*index/len(dataset)))+"%"
-    sys.stdout.write('\r'+percentage)
-    if("unknown" in row.values):
-        indexRows.append(index)
-sys.stdout.write('\r'+"                                             "+'\r')
-dataset.drop(indexRows , inplace=True)  #elimino missing values
-dataset.reset_index(drop=True, inplace=True) 
+dataset=F.deleteMissingValues(dataset, "unknown")
 
 for i in range(2,rnd.randint(3,6)):#mescolo il dataset
     for j in range(2,rnd.randint(3,6)):

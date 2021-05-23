@@ -21,13 +21,8 @@ else:
 
 dataset.drop(["duration","month","day_of_week",
               "default","pdays"], axis=1, inplace=True) # elimino attributi
-indexRows=[]
-index=-1
-for row in dataset.iloc:
-    index=index+1
-    if("unknown" in row.values):
-        indexRows.append(index)
-dataset.drop(indexRows , inplace=True) #elimino missing values
+
+dataset=F.deleteMissingValues(dataset, "unknown")
 
 for i in range(2,rnd.randint(3,6)):#mescolo il dataset
     for j in range(2,rnd.randint(3,6)):
