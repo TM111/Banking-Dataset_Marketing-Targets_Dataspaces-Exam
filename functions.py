@@ -1,23 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-catToNumDict = {
-   "no": 0,
-  "yes": 2,
-  "telephone": 0,
-  "cellular": 2,
-}
 
-def categoricalToNumeric(ds):
+import pandas as pd
+
+
+def OneHotEncoder(ds,attributes):
     dataset=ds
-    attributes=["housing","loan","contact"]
-    for index, row in dataset.iterrows():
-        percentage="encoding: "+str(int(100*index/len(ds)))+"%"
-        sys.stdout.write('\r'+percentage)
-        for att in attributes:
-            value=str(dataset.iloc[index][att])
-            dataset.loc[index, att]=catToNumDict[value]
-    sys.stdout.write('\r'+"                                             "+'\r')
+    for att in attributes:
+        one_hot = pd.get_dummies(dataset[att])
+        dataset = dataset.drop(att,axis = 1)
+        dataset = dataset.join(one_hot)
+        for i in range(0,len(one_hot.columns)):
+            dataset = dataset.rename(columns={one_hot.columns[i]: att+"_"+one_hot.columns[i]})
     return dataset
 
 def getOccurrences(ds,attribute,normalize=0,order=0):
