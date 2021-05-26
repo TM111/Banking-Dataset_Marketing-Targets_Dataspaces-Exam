@@ -13,7 +13,7 @@ import sys
 from mlxtend.plotting import plot_learning_curves
 
 small=1
-lenght=1000
+lenght=10000
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"

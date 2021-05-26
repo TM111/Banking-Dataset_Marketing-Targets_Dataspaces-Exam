@@ -13,7 +13,7 @@ from sklearn.svm import SVC
 from mlxtend.plotting import plot_learning_curves
 
 small=1
-lenght=10000
+lenght=1000
 random=1
 #PREPARAZIONE DATASET
 dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
@@ -120,6 +120,8 @@ y_test=y_test.astype('int')
 
 svm = SVC(C=best_C, gamma=best_g,probability=True)
 svm.fit(X_train, y_train)
+
+
 y_scores = svm.predict_proba(X_test)
 fpr, tpr, threshold = roc_curve(y_test, y_scores[:, 1])
 roc_auc = auc(fpr, tpr)
