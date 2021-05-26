@@ -19,8 +19,8 @@ if(small==1):
 else:
     dataset=pd.read_csv(dataset_path,delimiter=";")
 
-dataset.drop(["duration","month","day_of_week",
-              "default","pdays"], axis=1, inplace=True) # elimino attributi
+dataset.drop(["duration","month","day_of_week"
+              ,"pdays"], axis=1, inplace=True) # elimino attributi
 
 dataset=F.deleteMissingValues(dataset, "unknown")
 
