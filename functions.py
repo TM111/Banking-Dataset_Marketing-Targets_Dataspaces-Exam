@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 def deleteMissingValues(ds,att):
     dataset=ds
@@ -32,6 +33,13 @@ def OneHotEncoder(ds,attributes):
             attributes.append(att)
     attributes.append("y")
     dataset= dataset[attributes]
+    return dataset
+
+def labelEncoder(ds,attributes):
+    dataset=ds
+    le = LabelEncoder()
+    for att in attributes:
+        dataset[att]=le.fit(dataset[att]).transform(dataset[att])
     return dataset
 
 def getOccurrences(ds,attribute,normalize=0,order=0):

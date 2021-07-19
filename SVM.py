@@ -38,7 +38,7 @@ for i in range(2,rnd.randint(3,6)):#mescolo il dataset
         if(random==1):
             dataset = dataset.sample(frac=1).reset_index(drop=True) 
 
-
+#dataset=F.labelEncoder(dataset,["job"])
 dataset=F.OneHotEncoder(dataset,["housing","loan","contact","job","marital","education","poutcome","default"]) 
 
 #TRAIN, VAL e TEST
