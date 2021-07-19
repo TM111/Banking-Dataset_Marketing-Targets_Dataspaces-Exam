@@ -64,7 +64,7 @@ min_samples_splits=[]
 for i in range(2,50):
     min_samples_splits.append(i)
 n_estimators=[]
-for i in range(1,10):
+for i in range(1,11):
     min_samples_splits.append(i*50)
     
 best_accuracy=0;
@@ -76,8 +76,8 @@ i=-1
 
 if(small):
     Max_depth=[8]
-    min_samples_splits=[5]
-    n_estimators=[100]
+    min_samples_splits=[5,15]
+    n_estimators=[100,200]
     
 max_i=len(Criterions)*len(Max_depth)*len(min_samples_splits)*len(n_estimators)*int((1-test_ratio)/val_ratio)
 
@@ -116,6 +116,7 @@ acc=1-np.mean(pred_i != y_test)
 print('\r'+"Criterion: ",best_C)
 print('\r'+"Max_depth: ",best_D)
 print('\r'+"MSS: ",best_MSS)
+print('\r'+"N estimators: ",best_N)
 print("Accuracy: ",round(acc,3))
 
 
