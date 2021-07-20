@@ -3,7 +3,33 @@ import matplotlib.pyplot as plt
 import sys
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+import functions as F
+import random as rnd
 
+
+def getDataset(small,lenght,random):
+    dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
+    if(small==1):
+        if(random==1):
+            n = sum(1 for line in open(dataset_path)) - 1
+            skip = sorted(rnd.sample(range(1,n+1),n-lenght)) 
+            dataset = pd.read_csv(dataset_path,delimiter=";", skiprows=skip)
+        else:
+            dataset=pd.read_csv(dataset_path,delimiter=";", nrows=lenght)
+    else:
+        dataset=pd.read_csv(dataset_path,delimiter=";")
+
+    dataset.drop(["duration","month","day_of_week"
+              ,"pdays"], axis=1, inplace=True) # elimino attributi
+
+    dataset=F.deleteMissingValues(dataset, "unknown")
+   
+    for i in range(2,rnd.randint(3,6)):#mescolo il dataset
+        for j in range(2,rnd.randint(3,6)):
+            if(random==1):
+                dataset = dataset.sample(frac=1).reset_index(drop=True) 
+    return dataset
+            
 def deleteMissingValues(ds,att):
     dataset=ds
     indexRows=[]

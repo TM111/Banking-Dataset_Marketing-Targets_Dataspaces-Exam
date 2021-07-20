@@ -1,6 +1,4 @@
 import functions as F
-import pandas as pd
-import random as rnd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
@@ -12,31 +10,12 @@ from mlxtend.plotting import plot_learning_curves
 from sklearn.ensemble import RandomForestClassifier
 
 
+#LOAD E PREPROCESSIONG DATASET
 small=1
-lenght=1000
+lenght=500
 random=1
-#PREPARAZIONE DATASET
-dataset_path = "D:/Desktop/dataspaces/bank_full.csv"
-if(small==1):
-    if(random==1):
-        n = sum(1 for line in open(dataset_path)) - 1
-        skip = sorted(rnd.sample(range(1,n+1),n-lenght)) 
-        dataset = pd.read_csv(dataset_path,delimiter=";", skiprows=skip)
-    else:
-        dataset=pd.read_csv(dataset_path,delimiter=";", nrows=lenght)
-else:
-    dataset=pd.read_csv(dataset_path,delimiter=";")
 
-#dataset.drop(["job","marital","education","poutcome","default"], axis=1, inplace=True) # elimino attributi
-dataset.drop(["duration","month","day_of_week",
-              "pdays"], axis=1, inplace=True) # elimino attributi
-
-dataset=F.deleteMissingValues(dataset, "unknown")
-
-for i in range(2,rnd.randint(3,6)):#mescolo il dataset
-    for j in range(2,rnd.randint(3,6)):
-        if(random==1):
-            dataset = dataset.sample(frac=1).reset_index(drop=True) 
+dataset=F.getDataset(small,lenght,random)
 
 #dataset=F.labelEncoder(dataset,["job"]) 
 dataset=F.OneHotEncoder(dataset,["housing","loan","contact","job","marital","education","poutcome","default"]) 
