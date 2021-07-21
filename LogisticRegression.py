@@ -12,13 +12,13 @@ from sklearn.linear_model import LogisticRegression
 
 #LOAD E PREPROCESSIONG DATASET
 small=1
-lenght=500
+lenght=1000
 random=1
 
 dataset=F.getDataset(small,lenght,random)
 
-#dataset=F.labelEncoder(dataset,["job"]) 
-dataset=F.OneHotEncoder(dataset,["housing","loan","contact","job","marital","education","poutcome","default"]) 
+#ENCODING
+dataset=F.encodingDataset(dataset)
 
 
 #TRAIN, VAL e TEST

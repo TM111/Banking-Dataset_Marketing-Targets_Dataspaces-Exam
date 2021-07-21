@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 #LOAD E PREPROCESSIONG DATASET
 small=1
-lenght=500
+lenght=1000
 random=1
 
 dataset=F.getDataset(small,lenght,random)
@@ -19,7 +19,7 @@ df=dataset[attributes]
 corr_df = df.corr(method='pearson')
 plt.figure(figsize=(32, 24))
 sns.set(font_scale=3.5)
-#sns.heatmap(corr_df, annot=True)
+sns.heatmap(corr_df, annot=True)
 
 #MATRICE DI DISPERSIONE
 plt.figure(figsize=(32, 24))
@@ -45,16 +45,19 @@ sns.set(font_scale=4)
 attributes=["job","marital","education","default","housing",
             "loan","contact","poutcome"]
 
-'''
-att=attributes[2]
+
+att=attributes[6]
 wid=0.5
 plt.figure(figsize=(60, 24))
 
-keys,no_list,yes_list=F.getOccurrences(dataset,att,1,1)
+
+normalized=0
+order=1
+keys,no_list,yes_list=F.getOccurrences(dataset,att,normalized,order)
 plt.bar(keys, no_list,width=wid)
 plt.bar(keys, yes_list, bottom = no_list,width=wid)
 plt.show()
-'''
+
 
 
 

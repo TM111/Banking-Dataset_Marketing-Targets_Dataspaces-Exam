@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 import sys
@@ -12,13 +11,14 @@ from mlxtend.plotting import plot_learning_curves
 
 #LOAD E PREPROCESSIONG DATASET
 small=1
-lenght=500
+lenght=1000
 random=1
 
 dataset=F.getDataset(small,lenght,random)
 
-#dataset=F.labelEncoder(dataset,["job"])
-dataset=F.OneHotEncoder(dataset,["housing","loan","contact","job","marital","education","poutcome","default"]) 
+
+#ENCODING
+dataset=F.encodingDataset(dataset)
 
 #TRAIN, VAL e TEST
 X = dataset.iloc[:, :-1].values
@@ -26,11 +26,6 @@ y = dataset.iloc[:, len(dataset.columns)-1].values
 
 test_ratio = 0.10
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, shuffle=False)
-
-scaler = StandardScaler() #scaling
-scaler.fit(X_train)
-X_train = scaler.transform(X_train)
-X_test = scaler.transform(X_test)
 
 #TUNING
 val_ratio = 0.15
