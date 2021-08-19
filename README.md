@@ -8,8 +8,8 @@ The dataset collects information from customers of a Portuguese bank between May
 
 The goal of the study was to provide an accurate classifier that would allow the bank to contact those customers most likely to subscribe.
 
-The work was conducted with **Python 3.8 with** the help of the following libraries:
+The work was conducted with **Python 3.8** with the help of the following libraries:
 - **Pandas** and **Numpy** for data structures.
-- **Imblearn** for **rebalancing** algorithm.
+- **Imblearn** for rebalancing algorithm.
 - **Sklearn** for classification algorithms.
 - **Matplotlib** and **Seaborn** for the realization of the graphs.
